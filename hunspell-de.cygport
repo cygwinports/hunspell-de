@@ -1,0 +1,38 @@
+NAME="hunspell-de"
+VERSION=20160407
+RELEASE=1
+CATEGORY="Text"
+SUMMARY="German dictionary for Hunspell"
+DESCRIPTION="Hunspell is a spell checker and morphological analyzer library and
+program designed for languages with rich morphology and complex compounding or
+character encoding.
+This package provides a German dictionary for Hunspell."
+HOMEPAGE="https://www.j3e.de/ispell/igerman98/"
+SRC_URI="https://www.j3e.de/ispell/igerman98/dict/igerman98-${VERSION}.tar.bz2"
+SRC_DIR="igerman98-${VERSION}"
+PATCH_URI="http://pkgs.fedoraproject.org/cgit/rpms/hunspell-de.git/plain/grep-locale.patch"
+
+ARCH=noarch
+
+src_compile() {
+	lndirs
+	cd ${B}
+	cygmake -j1 hunspell/de_{AT,CH,DE}.{dic,aff} AFFIX_EXPANDER=aspell
+}
+
+src_install() {
+	cd ${B}
+	insinto /usr/share/myspell
+	doins hunspell/de_{AT,CH,DE}.{dic,aff}
+
+	for l in de_BE de_LU
+	do
+		dosym de_DE.aff /usr/share/myspell/$l.aff
+		dosym de_DE.dic /usr/share/myspell/$l.dic
+	done
+	for l in de_LI
+	do
+		dosym de_CH.aff /usr/share/myspell/$l.aff
+		dosym de_CH.dic /usr/share/myspell/$l.dic
+	done
+}
